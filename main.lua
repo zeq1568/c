@@ -84,8 +84,8 @@ editorBox.Parent = mainFrame
 
 -- Key System and Attach Logic
 local function checkKey()
-    local key = game:GetService("HttpService"):GetAsync("https://github.com/zeq1568/c/main/key")
-    local keyCondition = game:GetService("HttpService"):GetAsync("https://github.com/zeq1568/c/main/keycondition")
+    local key = game:GetService("HttpService"):GetAsync("https://raw.githubusercontent.com/zeq1568/c/refs/heads/main/key")
+    local keyCondition = game:GetService("HttpService"):GetAsync("https://raw.githubusercontent.com/zeq1568/c/refs/heads/main/keycondition")
     if keyCondition == "true" then
         -- Proceed with normal functionality
         return true
