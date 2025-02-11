@@ -1,167 +1,196 @@
-local player = game.Players.LocalPlayer
-local gui = Instance.new("ScreenGui", player.PlayerGui)
-local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 500, 0, 350)
-mainFrame.Position = UDim2.new(0.5, -250, 0.5, -175)
-mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-mainFrame.BorderSizePixel = 0
-mainFrame.Parent = gui
+-- Instances
+local HttpService = game:GetService("HttpService")
 
--- Title Bar
-local titleBar = Instance.new("Frame")
-titleBar.Size = UDim2.new(1, 0, 0, 40)
-titleBar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-titleBar.BorderSizePixel = 0
-titleBar.Parent = mainFrame
+local CeleronBeta = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local TitleBar = Instance.new("TextLabel")
+local CloseButton = Instance.new("TextButton")
+local Editor = Instance.new("TextBox")
+local RunButton = Instance.new("TextButton")
+local SaveButton = Instance.new("TextButton")
+local KeySystemFrame = Instance.new("Frame")
+local KeyInput = Instance.new("TextBox")
+local SubmitKey = Instance.new("TextButton")
+local StatusLabel = Instance.new("TextLabel")
 
--- Title Label
-local titleLabel = Instance.new("TextLabel")
-titleLabel.Size = UDim2.new(1, 0, 1, 0)
-titleLabel.Text = "Celeron V4 [BETA]"
-titleLabel.BackgroundTransparency = 1
-titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-titleLabel.TextSize = 18
-titleLabel.Font = Enum.Font.GothamBold
-titleLabel.TextAlign = Enum.TextAlign.Center
-titleLabel.Parent = titleBar
+-- Properties
+CeleronBeta.Name = "CeleronBeta"
+CeleronBeta.Parent = game.CoreGui
 
--- Attach Button
-local attachButton = Instance.new("TextButton")
-attachButton.Size = UDim2.new(0, 120, 0, 40)
-attachButton.Position = UDim2.new(0.5, -60, 0.3, 0)
-attachButton.Text = "Attach"
-attachButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-attachButton.BackgroundColor3 = Color3.fromRGB(60, 60, 255)
-attachButton.TextSize = 18
-attachButton.Parent = mainFrame
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = CeleronBeta
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Size = UDim2.new(0, 400, 0, 300)
+MainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+MainFrame.Active = true
+MainFrame.Draggable = true -- Allows dragging
+MainFrame.Visible = false -- Hidden until key is verified
 
--- Progress Bar
-local progressBar = Instance.new("Frame")
-progressBar.Size = UDim2.new(0, 400, 0, 20)
-progressBar.Position = UDim2.new(0.5, -200, 0.6, 0)
-progressBar.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-progressBar.BorderSizePixel = 0
-progressBar.Parent = mainFrame
+TitleBar.Name = "TitleBar"
+TitleBar.Parent = MainFrame
+TitleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+TitleBar.Size = UDim2.new(1, 0, 0, 30)
+TitleBar.Font = Enum.Font.SourceSansBold
+TitleBar.Text = "Celeron Beta"
+TitleBar.TextSize = 18
+TitleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
 
-local progressFill = Instance.new("Frame")
-progressFill.Size = UDim2.new(0, 0, 1, 0)
-progressFill.BackgroundColor3 = Color3.fromRGB(130, 60, 255)
-progressFill.BorderSizePixel = 0
-progressFill.Parent = progressBar
+CloseButton.Name = "CloseButton"
+CloseButton.Parent = TitleBar
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.Position = UDim2.new(1, -30, 0, 0)
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 0, 0)
+CloseButton.MouseButton1Click:Connect(function()
+    CeleronBeta:Destroy()
+end)
 
--- Minimize Button
-local minimizeButton = Instance.new("TextButton")
-minimizeButton.Size = UDim2.new(0, 40, 0, 40)
-minimizeButton.Position = UDim2.new(1, -40, 0, 0)
-minimizeButton.Text = "-"
-minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-minimizeButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-minimizeButton.TextSize = 24
-minimizeButton.Parent = mainFrame
+Editor.Name = "Editor"
+Editor.Parent = MainFrame
+Editor.Size = UDim2.new(1, -20, 0, 200)
+Editor.Position = UDim2.new(0, 10, 0, 40)
+Editor.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Editor.TextColor3 = Color3.fromRGB(255, 255, 255)
+Editor.Font = Enum.Font.Code
+Editor.TextSize = 16
+Editor.MultiLine = true
+Editor.Text = 'print("Hello World!")' -- Default editor text
 
--- Close Button
-local closeButton = Instance.new("TextButton")
-closeButton.Size = UDim2.new(0, 40, 0, 40)
-closeButton.Position = UDim2.new(1, -40, 0, 0)
-closeButton.Text = "X"
-closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-closeButton.TextSize = 24
-closeButton.Parent = mainFrame
+RunButton.Name = "RunButton"
+RunButton.Parent = MainFrame
+RunButton.Size = UDim2.new(0, 80, 0, 30)
+RunButton.Position = UDim2.new(1, -90, 1, -40)
+RunButton.BackgroundColor3 = Color3.fromRGB(128, 0, 128) -- Purple button
+RunButton.Text = "Run"
+RunButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+RunButton.MouseButton1Click:Connect(function()
+    loadstring(Editor.Text)()
+end)
 
--- Monaco Editor (Luau Script Editor)
-local editorBox = Instance.new("TextBox")
-editorBox.Size = UDim2.new(1, -40, 0, 100)
-editorBox.Position = UDim2.new(0, 20, 0, 100)
-editorBox.Text = "Enter Luau Script Here..."
-editorBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-editorBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-editorBox.TextSize = 14
-editorBox.Font = Enum.Font.Gotham
-editorBox.TextWrapped = true
-editorBox.MultiLine = true
-editorBox.Parent = mainFrame
+SaveButton.Name = "SaveButton"
+SaveButton.Parent = MainFrame
+SaveButton.Size = UDim2.new(0, 80, 0, 30)
+SaveButton.Position = UDim2.new(0, 10, 1, -40)
+SaveButton.Text = "Save"
+SaveButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+SaveButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 
--- Key System and Attach Logic
-local function checkKey()
-    local key = game:GetService("HttpService"):GetAsync("https://raw.githubusercontent.com/zeq1568/c/refs/heads/main/key")
-    local keyCondition = game:GetService("HttpService"):GetAsync("https://raw.githubusercontent.com/zeq1568/c/refs/heads/main/keycondition")
-    if keyCondition == "true" then
-        -- Proceed with normal functionality
+-- Key System UI
+KeySystemFrame.Name = "KeySystemFrame"
+KeySystemFrame.Parent = CeleronBeta
+KeySystemFrame.Size = UDim2.new(0, 300, 0, 150)
+KeySystemFrame.Position = UDim2.new(0.5, -150, 0.5, -75)
+KeySystemFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+
+KeyInput.Name = "KeyInput"
+KeyInput.Parent = KeySystemFrame
+KeyInput.Size = UDim2.new(0.8, 0, 0, 40)
+KeyInput.Position = UDim2.new(0.1, 0, 0.2, 0)
+KeyInput.PlaceholderText = "Enter Key"
+KeyInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+SubmitKey.Name = "SubmitKey"
+SubmitKey.Parent = KeySystemFrame
+SubmitKey.Size = UDim2.new(0.5, 0, 0, 30)
+SubmitKey.Position = UDim2.new(0.25, 0, 0.6, 0)
+SubmitKey.Text = "Submit"
+SubmitKey.TextColor3 = Color3.fromRGB(255, 255, 255)
+SubmitKey.BackgroundColor3 = Color3.fromRGB(0, 128, 0)
+
+StatusLabel.Name = "StatusLabel"
+StatusLabel.Parent = KeySystemFrame
+StatusLabel.Size = UDim2.new(1, 0, 0, 20)
+StatusLabel.Position = UDim2.new(0, 0, 0.85, 0)
+StatusLabel.Text = ""
+StatusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+StatusLabel.TextSize = 14
+
+-- Directory path
+local directoryPath = "Celeron\\"
+
+-- Create the folder if it doesn't exist
+if not isfolder(directoryPath) then
+    makefolder(directoryPath)
+end
+
+-- Filename input and extension selection code
+local fileNameInput = Instance.new("TextBox")
+fileNameInput.Size = UDim2.new(0.8, 0, 0, 40)
+fileNameInput.Position = UDim2.new(0.1, 0, 0.2, 0)
+fileNameInput.PlaceholderText = "Enter filename (without extension)"
+fileNameInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+fileNameInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+fileNameInput.Parent = KeySystemFrame
+
+local extensionDropdown = Instance.new("TextButton")
+extensionDropdown.Size = UDim2.new(0.8, 0, 0, 40)
+extensionDropdown.Position = UDim2.new(0.1, 0, 0.6, 0)
+extensionDropdown.Text = "Choose Extension (.lua or .luau)"
+extensionDropdown.TextColor3 = Color3.fromRGB(255, 255, 255)
+extensionDropdown.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+extensionDropdown.Parent = KeySystemFrame
+
+local fileExtension = ".lua"  -- Default extension
+
+extensionDropdown.MouseButton1Click:Connect(function()
+    -- Toggle between .lua and .luau
+    if fileExtension == ".lua" then
+        fileExtension = ".luau"
+    else
+        fileExtension = ".lua"
+    end
+    extensionDropdown.Text = "Chosen Extension: " .. fileExtension
+end)
+
+-- Key system logic
+local keyUrl = "https://raw.githubusercontent.com/zeq1568/c/refs/heads/main/key"
+local keyConditionUrl = "https://raw.githubusercontent.com/zeq1568/c/refs/heads/main/keycondition"
+
+local function getKeyData(url)
+    local success, response = pcall(function()
+        return HttpService:GetAsync(url)
+    end)
+    return success and response or nil
+end
+
+local function verifyKey(inputKey)
+    local validKey = getKeyData(keyUrl)
+    local keyCondition = getKeyData(keyConditionUrl)
+
+    if not validKey or not keyCondition then
+        StatusLabel.Text = "Failed to fetch key data."
+        return false
+    end
+
+    if inputKey == validKey then
         return true
     else
-        -- Show key error or warning
-        createMessageBox("Key Error", "Invalid key, please check your key.")
+        StatusLabel.Text = "Invalid Key!"
         return false
     end
 end
 
--- Attach button functionality
-attachButton.MouseButton1Click:Connect(function()
-    if checkKey() then
-        attachButton.Text = "Attaching..."
-        progressFill:TweenSize(UDim2.new(0, 100, 1, 0), "Out", "Quad", 3, true)
-        wait(3)
-        attachButton.Text = "Attached"
-        attachButton.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
+SubmitKey.MouseButton1Click:Connect(function()
+    local inputKey = KeyInput.Text
+    if verifyKey(inputKey) then
+        KeySystemFrame:Destroy()
+        MainFrame.Visible = true
+    else
+        StatusLabel.Text = "Invalid Key!"
     end
 end)
 
--- Minimize Button Functionality
-minimizeButton.MouseButton1Click:Connect(function()
-    mainFrame.Visible = false
-end)
+SaveButton.MouseButton1Click:Connect(function()
+    local filename = fileNameInput.Text .. fileExtension  -- Combine input filename and extension
+    local content = Editor.Text  -- Get the content from the editor
+    local filePath = directoryPath .. filename  -- Full path for saving the file
 
--- Close Button Functionality
-closeButton.MouseButton1Click:Connect(function()
-    gui:Destroy()
-end)
-
--- Function to create custom message boxes
-local function createMessageBox(title, message)
-    local messageBox = Instance.new("Frame")
-    messageBox.Size = UDim2.new(0, 400, 0, 200)
-    messageBox.Position = UDim2.new(0.5, -200, 0.5, -100)
-    messageBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    messageBox.BackgroundTransparency = 0.5
-    messageBox.BorderSizePixel = 0
-    messageBox.Parent = mainFrame
-
-    local titleLabel = Instance.new("TextLabel")
-    titleLabel.Size = UDim2.new(1, 0, 0, 40)
-    titleLabel.Text = title
-    titleLabel.BackgroundTransparency = 1
-    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    titleLabel.TextSize = 20
-    titleLabel.Font = Enum.Font.GothamBold
-    titleLabel.TextAlign = Enum.TextAlign.Center
-    titleLabel.Parent = messageBox
-
-    local messageLabel = Instance.new("TextLabel")
-    messageLabel.Size = UDim2.new(1, -40, 0, 100)
-    messageLabel.Position = UDim2.new(0, 20, 0, 50)
-    messageLabel.Text = message
-    messageLabel.BackgroundTransparency = 1
-    messageLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    messageLabel.TextSize = 16
-    messageLabel.Font = Enum.Font.Gotham
-    messageLabel.TextAlign = Enum.TextAlign.Center
-    messageLabel.TextWrapped = true
-    messageLabel.Parent = messageBox
-
-    local closeButton = Instance.new("TextButton")
-    closeButton.Size = UDim2.new(0, 100, 0, 40)
-    closeButton.Position = UDim2.new(0.5, -50, 1, -50)
-    closeButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-    closeButton.Text = "Close"
-    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    closeButton.TextSize = 16
-    closeButton.Parent = messageBox
-
-    closeButton.MouseButton1Click:Connect(function()
-        messageBox:Destroy()
+    -- Save the file with the chosen extension inside the Celeron folder
+    pcall(function()
+        writefile(filePath, content)
     end)
-end
 
--- Example message box
-createMessageBox("Key Validation", "Please enter a valid key to continue.")
+    -- Optionally, show a confirmation message in StatusLabel
+    StatusLabel.Text = "Script saved as " .. filePath
+end)
